@@ -64,8 +64,8 @@ def parse_metadata(fp):
     return rest, data
 
 
-def get_posts():
-    return None
+def get_articles():
+    return []
 
 
 def create():
@@ -145,13 +145,14 @@ def generate():
     # Output into another directory, respecting their metadata.
 
     # Get all filenames
-    files = [os.path.join('content', 'index.html')]
+    # files = [os.path.join('content', 'index.html')]
     pages = [os.path.join('content', 'pages', f) for f in os.listdir(os.path.join('content', 'pages'))]
     articles = [os.path.join('content', 'articles', f) for f in os.listdir(os.path.join('content', 'articles'))]
 
-    files = files + pages + articles
+    files = pages + articles
 
     # BEGIN: Parse files
+    env = jn.Environment(loader=jn.PackageLoader('statico', 'templates'))
 
     for f in files:
         fp = open(f)
@@ -159,27 +160,29 @@ def generate():
         rest, data = parse_metadata(fp)
         html = markdown.markdown(''.join(rest))
 
-        if file_no_ext == 'index':
-            target = ''
-        else:
-            target = data.get('layout') + 's'
-            target_dir = os.path.join('output', target)
-            if os.path.exists(target_dir):
-                shutil.rmtree(target_dir)
-            os.makedirs(target_dir)
+        """if file_no_ext == 'index':
+            continue"""
+
+        target = data.get('layout') + 's'
+        target_dir = os.path.join('output', target)
+        if os.path.exists(target_dir):
+            shutil.rmtree(target_dir)
+        os.makedirs(target_dir)
 
         # Create file in output direction
         layout = data.get('layout')
-        env = jn.Environment(loader=jn.PackageLoader('statico', 'templates'))
         template = env.get_template(layout + '.html')
-        if layout == 'default':
-            # Get all posts and pass them to render
-            page = template.render({'posts': get_posts()})
-        else:
-            data['content'] = html
-            page = template.render(data)  # Date and other things
+
+        data['content'] = html
+        page = template.render(data)  # Date and other things
 
         open(os.path.join('output', target, file_no_ext + '.html'), 'w').write(page)
+
+    # Copy index
+    template = env.get_template('default.html')
+    data = {'articles': get_articles()}
+    page = template.render(data)
+    open(os.path.join('output', 'index.html'), 'w').write(page)
 
     # END: Parse files
 
