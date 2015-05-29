@@ -19,6 +19,11 @@ statico -a or --article "article_title"
 statico -d or --deploy
 """
 
+"""
+Directory structure of 'generate':
+
+"""
+
 
 def normalize_title(title):
     return title.lower().replace(' ', '-')
@@ -59,9 +64,14 @@ def parse_metadata(fp):
     return rest, data
 
 
+def get_posts():
+    return None
+
+
 def create():
     settings = open('settings.py', 'w')
 
+    # Static
     os.makedirs('static')
     os.makedirs(os.path.join('static', 'css'))
     os.makedirs(os.path.join('static', 'js'))
@@ -69,12 +79,12 @@ def create():
     style = open(os.path.join('static', 'css', 'main.css'), 'w')
     js = open(os.path.join('static', 'js', 'main.js'), 'w')
 
-    os.makedirs('templates')
-    os.makedirs(os.path.join('templates', 'includes'))
-    base = open(os.path.join('templates', 'base.html'), 'w')
-    article = open(os.path.join('templates', 'article.html'), 'w')
-    page = open(os.path.join('templates', 'page.html'), 'w')
+    # Templates
+    path = os.path.abspath(__file__)
+    dir_path = os.path.join(os.path.dirname(path), 'templates')
+    copy_directory(dir_path, 'templates')
 
+    # Content
     os.makedirs('content')
     os.makedirs(os.path.join('content', 'articles'))
     os.makedirs(os.path.join('content', 'pages'))
@@ -164,11 +174,11 @@ def generate():
         template = env.get_template(layout + '.html')
         if layout == 'default':
             # Get all posts and pass them to render
-            pass
-            # page = template.render()
+            page = template.render({'posts': get_posts()})
         else:
             data['content'] = html
             page = template.render(data)  # Date and other things
+
         open(os.path.join('output', target, file_no_ext + '.html'), 'w').write(page)
 
     # END: Parse files
