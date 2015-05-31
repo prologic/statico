@@ -6,6 +6,7 @@ __version__ = '0.1.0'
 import sys
 import os
 import markdown
+import json
 import shutil
 from datetime import date
 import argparse as ap
@@ -17,11 +18,6 @@ statico -g or --generate --> the output/public directory
 statico -p or --page "page_title"
 statico -a or --article "article_title"
 statico -d or --deploy
-"""
-
-"""
-Directory structure of 'generate':
-
 """
 
 
@@ -83,6 +79,14 @@ def parse_index(filename, o):
     open(os.path.join('output', 'index.html'), 'w').write(page)
 
 
+def clear_workspace():
+    os.remove('settings.json')
+    shutil.rmtree('content', True)
+    shutil.rmtree('output', True)
+    shutil.rmtree('static', True)
+    shutil.rmtree('templates', True)
+
+
 def get_articles(f_articles):
     articles = []
 
@@ -95,7 +99,7 @@ def get_articles(f_articles):
 
 
 def create():
-    settings = open('settings.py', 'w')
+    settings = open('settings.json', 'w')
 
     # Static
     os.makedirs('static')
@@ -125,6 +129,7 @@ def create():
 
 
 def new_page(name):
+    settings = json.load(open('settings.json'))
     filename = os.path.join('content', 'pages', name + '.md')
 
     if os.path.isfile(filename):
@@ -137,7 +142,7 @@ def new_page(name):
         'layout: page\n',
         'title: ' + name + '\n',
         'date: ' + date.today().isoformat() + '\n',
-        'author: Ossama Edbali\n',  # Read settings
+        'author: ' + settings.get('author') + '\n',
         'summary: A beautiful page\n',
         '---'
     ])
@@ -146,6 +151,7 @@ def new_page(name):
 
 def new_article(title):
     # 2015/05/27/99-challenge/
+    settings = json.load(open('settings.json'))
     filename = os.path.join('content', 'articles', date.today().isoformat() + '-' + normalize_title(title) + '.md')
 
     if os.path.isfile(filename):
@@ -158,7 +164,7 @@ def new_article(title):
         'layout: article\n',
         'title: ' + title + '\n',
         'date: ' + date.today().isoformat() + '\n',
-        'author: Ossama Edbali' + '\n',  # Read settings
+        'author: ' + settings.get('author') + '\n',
         'summary: A beautiful page\n',
         '---'
     ])
@@ -235,6 +241,7 @@ def main():
         elif args.article:
             new_article(args.article)
         elif args.clear:
-            pass
+            if input('Are you sure you want to clear the workspace? [y/n] ') == 'y':
+                clear_workspace()
         elif args.deploy:
             pass
