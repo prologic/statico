@@ -64,8 +64,34 @@ def parse_metadata(fp):
     return rest, data
 
 
-def get_articles():
-    return []
+def parse_index(filename, o):
+    """
+    ---
+    layout: default/custom
+    ---
+    if custom the write here:
+    ...
+    """
+    fp = open(filename)
+    rest, data = parse_metadata(fp)
+    html = markdown.markdown(''.join(rest))
+    data['articles'] = get_articles(o.get('articles'))
+    data['content'] = html
+
+    template = o.get('env').get_template('default.html')
+    page = template.render(data)
+    open(os.path.join('output', 'index.html'), 'w').write(page)
+
+
+def get_articles(f_articles):
+    articles = []
+
+    for f_article in f_articles:
+        fp = open(f_article)
+        _, data = parse_metadata(fp)
+        articles.append(data)
+
+    return articles
 
 
 def create():
@@ -88,11 +114,11 @@ def create():
     os.makedirs('content')
     os.makedirs(os.path.join('content', 'articles'))
     os.makedirs(os.path.join('content', 'pages'))
-    index = open(os.path.join('content', 'index.html'), 'w')
+    index = open(os.path.join('content', 'index.md'), 'w')
     index.writelines([
-        '---',
-        'layout: default',
-        '---'
+        '---\n',
+        'layout: default\n',
+        '---\n'
     ])
 
     os.makedirs('output')
@@ -107,12 +133,12 @@ def new_page(name):
 
     page = open(filename, 'w')
     page.writelines([
-        '---',
-        'layout: page',
-        'title: ' + name,
-        'date: ' + date.today().isoformat(),
-        'author: Ossama Edbali',  # Read settings
-        'summary: A beautiful page',
+        '---\n',
+        'layout: page\n',
+        'title: ' + name + '\n',
+        'date: ' + date.today().isoformat() + '\n',
+        'author: Ossama Edbali\n',  # Read settings
+        'summary: A beautiful page\n',
         '---'
     ])
     page.close()
@@ -128,12 +154,12 @@ def new_article(title):
 
     article = open(filename, 'w')
     article.writelines([
-        '---',
-        'layout: article',
-        'title: ' + title,
-        'date: ' + date.today().isoformat(),
-        'author: Ossama Edbali',  # Read settings
-        'summary: A beautiful page',
+        '---\n',
+        'layout: article\n',
+        'title: ' + title + '\n',
+        'date: ' + date.today().isoformat() + '\n',
+        'author: Ossama Edbali' + '\n',  # Read settings
+        'summary: A beautiful page\n',
         '---'
     ])
 
@@ -160,9 +186,6 @@ def generate():
         rest, data = parse_metadata(fp)
         html = markdown.markdown(''.join(rest))
 
-        """if file_no_ext == 'index':
-            continue"""
-
         target = data.get('layout') + 's'
         target_dir = os.path.join('output', target)
         if os.path.exists(target_dir):
@@ -179,10 +202,7 @@ def generate():
         open(os.path.join('output', target, file_no_ext + '.html'), 'w').write(page)
 
     # Copy index
-    template = env.get_template('default.html')
-    data = {'articles': get_articles()}
-    page = template.render(data)
-    open(os.path.join('output', 'index.html'), 'w').write(page)
+    parse_index(os.path.join('content', 'index.md'), {'env': env, 'articles': articles})
 
     # END: Parse files
 
@@ -204,6 +224,7 @@ def main():
                             action='store_true')
         parser.add_argument('-p', '--page', help='Create a page', type=str)
         parser.add_argument('-a', '--article', help='Create an article', type=str)
+        parser.add_argument('-c', '--clear', help='Clear directory', action='store_true')
         parser.add_argument('-d', '--deploy', help='Deploy', action='store_true')
         args = parser.parse_args()
 
@@ -213,5 +234,7 @@ def main():
             new_page(args.page)
         elif args.article:
             new_article(args.article)
+        elif args.clear:
+            pass
         elif args.deploy:
             pass
