@@ -1,3 +1,6 @@
-<header>
-    <h1>Test</h1>
+<header class="site-header">
+    <h1>{{ site.title }}</h1>
+    {% if site.subtitle %}
+    <h2>{{ site.subtitle }}</h2>
+    {% endif %}
 </header>
