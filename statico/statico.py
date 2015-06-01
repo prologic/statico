@@ -46,7 +46,7 @@ def run_server():
     Handler = http.server.SimpleHTTPRequestHandler
     httpd = socketserver.TCPServer(("", PORT), Handler)
 
-    print("Serving at port...", PORT)
+    print("Serving at http://127.0.0.1:", PORT, '...')
     httpd.serve_forever()
 
 
@@ -111,7 +111,8 @@ def get_articles(f_articles):
 
     for f_article in f_articles:
         fp = open(f_article)
-        _, data = parse_metadata(fp)
+        rest, data = parse_metadata(fp)
+        data['content'] = markdown.markdown(''.join(rest))
         articles.append(data)
 
     return articles
