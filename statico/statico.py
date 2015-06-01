@@ -8,7 +8,7 @@ import os
 import markdown
 import json
 import shutil
-from datetime import date
+from datetime import date, datetime
 import http.server
 import socketserver
 import argparse as ap
@@ -54,6 +54,15 @@ def deploy():
     pass
 
 
+def validate_date(date_text):
+    try:
+        datetime.strptime(date_text, '%Y-%m-%d')
+    except ValueError:
+        return False
+
+    return True
+
+
 def parse_metadata(fp):
     found_open = False
     found_close = False
@@ -71,7 +80,11 @@ def parse_metadata(fp):
             parts = line.split(':')
             attr = parts[0]
             value = parts[1].strip()
-            data[attr] = value
+
+            if validate_date(value):
+                data[attr] = datetime.strptime(value, '%Y-%m-%d').strftime('%B %d, %Y')
+            else:
+                data[attr] = value
         else:  # Found close
             rest.append(line)
 
@@ -99,7 +112,8 @@ def parse_index(filename, o):
 
 
 def clear_workspace():
-    os.remove('settings.json')
+    if os.path.isfile('settings.json'):
+        os.remove('settings.json')
     shutil.rmtree('content', True)
     shutil.rmtree('output', True)
     shutil.rmtree('static', True)
@@ -124,14 +138,17 @@ def create():
 
     # Settings
     shutil.copy(os.path.join(dir_path, 'settings.json'), 'settings.json')
+    print(' - settings.json [DONE]')
 
     # Static
     static_path = os.path.join(dir_path, 'static')
     copy_directory(static_path, 'static')
+    print(' - Static assets [DONE]')
 
     # Templates
     templates_path = os.path.join(dir_path, 'templates')
     copy_directory(templates_path, 'templates')
+    print(' - Templates [DONE]')
 
     # Content
     os.makedirs('content')
@@ -143,8 +160,11 @@ def create():
         'layout: default\n',
         '---\n'
     ])
+    print(' - Contents directory [DONE]')
 
+    # Output
     os.makedirs('output')
+    print(' - Output directory [DONE]')
 
 
 def new_page(name):
@@ -242,6 +262,7 @@ def main():
 
     # Create directory structure
     if len(sys.argv[1:]) == 0:
+        print('Creating site...')
         create()
     else:
         parser = ap.ArgumentParser()
