@@ -4,22 +4,24 @@
     {% include 'includes/head.html' %}
 </head>
 <body>
-    <header>
+    <header class="main-header">
     {% include 'includes/header.html' %}
     {% include 'includes/navigation.html' %}
     </header>
 
-    <div class="aside">
+    <aside class="main-aside">
         {% for aside in site.asides %}
         {% include 'includes/asides/' + aside %}
         {% endfor %}
-    </div>
+    </aside>
 
-    <div class="container">
+    <section class="main-container">
     {% block container %}{% endblock %}
-    </div>
+    </section>
 
+    <footer class="main-footer">
     {% include 'includes/footer.html' %}
+    </footer>
 
     {% include 'includes/after_footer.html' %}
 </body>

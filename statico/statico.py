@@ -46,7 +46,7 @@ def run_server():
     Handler = http.server.SimpleHTTPRequestHandler
     httpd = socketserver.TCPServer(("", PORT), Handler)
 
-    print("Serving at http://127.0.0.1:", PORT, '...')
+    print("Serving at http://127.0.0.1:" + str(PORT) + ' ...')
     httpd.serve_forever()
 
 
@@ -258,7 +258,8 @@ def main():
             print('Generating site...')
             generate()
             print('Head to "output" to view your generated site.\n'
-                  'Type "statico --deploy" to deploy your site to GitHub, otherwise upload manually.')
+                  'Type "statico --deploy" to deploy your site to GitHub, otherwise upload manually.\n'
+                  'Type "statico --preview" to get a preview of your site.')
         elif args.page:
             new_page(args.page)
         elif args.article:
