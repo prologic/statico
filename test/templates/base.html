@@ -4,25 +4,29 @@
     {% include 'includes/head.html' %}
 </head>
 <body>
-    <header class="main-header">
-    {% include 'includes/header.html' %}
-    {% include 'includes/navigation.html' %}
-    </header>
+    <div class="wrapper">
+        <header class="main-header">
+        {% include 'includes/header.html' %}
+        {% include 'includes/navigation.html' %}
+        </header>
 
-    <aside class="main-aside">
-        {% for aside in site.asides %}
-        {% include 'includes/asides/' + aside %}
-        {% endfor %}
-    </aside>
+        <div class="main-container">
+            <aside class="main-aside">
+                {% for aside in site.asides %}
+                {% include 'includes/asides/' + aside %}
+                {% endfor %}
+            </aside>
 
-    <section class="main-container">
-    {% block container %}{% endblock %}
-    </section>
+            <section class="blog-index">
+            {% block container %}{% endblock %}
+            </section>
+        </div>
 
-    <footer class="main-footer">
-    {% include 'includes/footer.html' %}
-    </footer>
+        <footer class="main-footer">
+        {% include 'includes/footer.html' %}
+        </footer>
 
-    {% include 'includes/after_footer.html' %}
+        {% include 'includes/after_footer.html' %}
+    </div>
 </body>
 </html>

@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
 {% block container %}
-    <h1>{{ title }}</h1>
-    <h2>{{ summary }}</h2>
+    <article class="entry">
+        <p class="date">{{ date }}</p>
+        <h2>{{ title }}</h2>
 
-    <p>
+        <div class="content">
         {{ content }}
-    </p>
-
+        </div>
+    </article>
 {% endblock %}

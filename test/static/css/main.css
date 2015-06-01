@@ -5,5 +5,74 @@
 }
 
 body {
-    background-color: #afafaf;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.wrapper {
+    width: 100%;
+}
+
+.main-header {
+    padding: 30px 45px;
+}
+
+.main-header .title {
+    margin-bottom: 25px;
+}
+
+.main-header .title h1 {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.main-header .title h2 {
+    font-size: 20px;
+}
+
+.main-header .nav {
+    list-style: none;
+}
+
+.main-header .nav li {
+    display: inline-block;
+    margin-right: 24px;
+}
+
+.main-header .nav li:last-child {
+    margin-right: 0;
+}
+
+.main-header .nav li a {
+    color: #268bd2;
+}
+
+.main-container {
+    position: relative;
+}
+
+.main-aside {
+    width: 100%;
+}
+
+.blog-index {
+    width: 100%;
+}
+
+.entry {
+
+}
+
+.entry .date {
+
+}
+
+.main-footer {
+
+}
+
+@media only screen and (min-device-width: 768px) {
+    .wrapper {
+        width: 70%;
+        margin: 0 15%;
+    }
 }
