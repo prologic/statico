@@ -33,18 +33,21 @@ var paginate = (function () {
 
     var createPages = function (num, perPage) {
         var page = document.createElement('div'),
-            articles = document.querySelectorAll('.entry');
+            articles = document.querySelectorAll('.entry'),
+            blogIndex = document.querySelector('.blog-index');
 
         page.className = 'paginate-page';
 
         for (var i = 0; i < num; i++) {
-            if (i === 0 || i % perPage !== 0) {
-                // Add to page
-
-            }
-            else {
+            if (i !== 0 && i % perPage === 0) {
                 // Add page to blog index and change page
+                blogIndex.appendChild(page);
+                page = document.createElement('div');
+                page.className = 'paginate-page';
+                page.style.display = 'none';
             }
+
+            page.appendChild(articles[i]);
         }
 
     };
@@ -53,8 +56,7 @@ var paginate = (function () {
 
     };
 
-    _.Paginator = function (opt) {
-
+    _.create = function (opt) {
         var sel = opt.selector,
             perPage = opt.itemsOnPage,
             edges = opt.edges,
@@ -64,10 +66,6 @@ var paginate = (function () {
         var n = Math.ceil(element.length / perPage);
         createLinks(n);
         createPages(n, perPage);
-    };
-
-    _.create = function (opt) {
-        return new _.Paginator(opt);
     };
 
     return _;

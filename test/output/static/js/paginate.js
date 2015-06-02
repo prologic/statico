@@ -31,23 +31,41 @@ var paginate = (function () {
         document.querySelector('.blog-index').appendChild(wrapper);
     };
 
+    var createPages = function (num, perPage) {
+        var page = document.createElement('div'),
+            articles = document.querySelectorAll('.entry'),
+            blogIndex = document.querySelector('.blog-index');
+
+        page.className = 'paginate-page';
+
+        for (var i = 0; i < num; i++) {
+            if (i !== 0 && i % perPage === 0) {
+                // Add page to blog index and change page
+                blogIndex.appendChild(page);
+                page = document.createElement('div');
+                page.className = 'paginate-page';
+                page.style.display = 'none';
+            }
+
+            page.appendChild(articles[i]);
+        }
+
+    };
+
     var goTo = function () {
 
     };
 
-    _.Paginator = function (opt) {
-
+    _.create = function (opt) {
         var sel = opt.selector,
             perPage = opt.itemsOnPage,
             edges = opt.edges,
             displayedPages = opt.displayedPages,
             element = document.querySelectorAll(sel);
 
-        createLinks(Math.ceil(element.length / perPage));
-    };
-
-    _.create = function (opt) {
-        return new _.Paginator(opt);
+        var n = Math.ceil(element.length / perPage);
+        createLinks(n);
+        createPages(n, perPage);
     };
 
     return _;

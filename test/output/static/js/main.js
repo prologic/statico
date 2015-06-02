@@ -1,10 +1,10 @@
-var main = (function (paginate) {
+var main = (function (paginate, numberOfItems) {
 
     var init = function () {
 
         var pag = paginate.create({
             'selector': '.entry',
-            'itemsOnPage': 10,
+            'itemsOnPage': numberOfItems,
             'edges': 2,
             'displayedPages': 5
         });
@@ -15,6 +15,6 @@ var main = (function (paginate) {
         'init': init
     }
 
-})(paginate);
+})(paginate, numberOfItems);
 
 window.onload = main.init;
