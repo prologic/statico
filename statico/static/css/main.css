@@ -125,6 +125,24 @@ article .content {
 	color: #787878;
 }
 
+.paginate-wrapper {
+    text-align: center;
+    padding: 15px;
+}
+
+.paginate-wrapper a {
+    margin-right: 16px;
+    text-decoration: none;
+}
+
+.paginate-wrapper a.active {
+    text-decoration: underline;
+}
+
+.paginate-wrapper a:last-child {
+    margin-right: 0;
+}
+
 @media only screen and (min-width: 768px) {
     .wrapper {
         width: 80%;

@@ -275,6 +275,8 @@ def main():
         parser.add_argument('-d', '--deploy', help='Deploy to GitHub', action='store_true')
         args = parser.parse_args()
 
+        # TODO: No site detected alert
+
         if args.generate:
             print('Generating site...')
             generate()
