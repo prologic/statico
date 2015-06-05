@@ -1,13 +1,6 @@
-var main = (function (paginate, numberOfItems) {
+var main = (function (numberOfItems) {
 
     var init = function () {
-
-        var pag = paginate.create({
-            'selector': '.entry',
-            'itemsOnPage': numberOfItems,
-            'edges': 2,
-            'displayedPages': 5
-        });
 
     };
 
@@ -15,6 +8,6 @@ var main = (function (paginate, numberOfItems) {
         'init': init
     }
 
-})(paginate, numberOfItems);
+})(numberOfItems);
 
 window.onload = main.init;
