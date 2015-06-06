@@ -1,20 +1,11 @@
-var main = (function (paginate, numberOfItems) {
+var main = (function (paginator, numberOfItems) {
 
     var init = function () {
-
-        var pag = paginate.create({
-            'selector': '.entry',
-            'itemsOnPage': numberOfItems,
-            'edges': 2,
-            'displayedPages': 5
-        });
-
+        paginator.create('.blog-index .entry');
     };
 
-    return {
-        'init': init
-    }
+    return { 'init': init };
 
-})(paginate, numberOfItems);
+})(paginator, numberOfItems);
 
 window.onload = main.init;

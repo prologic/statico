@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-__version__ = '0.1.0'
+__version__ = '0.0.1'
 
 
 import sys
@@ -36,6 +36,11 @@ def copy_directory(src, dest):
     # Any error saying that the directory doesn't exist
     except OSError as e:
         print('Directory not copied. Error: %s' % e)
+
+
+def sorted_list_dir(path):
+    mtime = lambda f: os.stat(os.path.join(path, f)).st_mtime
+    return list(sorted(os.listdir(path), key=mtime))
 
 
 def run_server():
@@ -127,6 +132,7 @@ def get_articles(f_articles):
         fp = open(f_article)
         rest, data = parse_metadata(fp)
         data['content'] = markdown.markdown(''.join(rest))
+        data['url'] = 'articles/' + os.path.basename(os.path.normpath(f_article.split('.')[0])) + '.html'
         articles.append(data)
 
     return articles
@@ -135,6 +141,8 @@ def get_articles(f_articles):
 def create():
     path = os.path.abspath(__file__)
     dir_path = os.path.dirname(path)
+
+    open('.statico', 'w')
 
     # Settings
     shutil.copy(os.path.join(dir_path, 'settings.json'), 'settings.json')
@@ -185,6 +193,7 @@ def new_page(name):
         '---\n'
     ])
     page.close()
+    print('Page created successfully:', filename)
 
 
 def new_article(title):
@@ -206,14 +215,16 @@ def new_article(title):
         'summary: A beautiful page\n',
         '---\n'
     ])
+    article.close()
+    print('Article created successfully:', filename)
 
 
 def generate():
     settings = json.load(open('settings.json'))
 
     # Get all filenames
-    pages = [os.path.join('content', 'pages', f) for f in os.listdir(os.path.join('content', 'pages'))]
-    articles = [os.path.join('content', 'articles', f) for f in os.listdir(os.path.join('content', 'articles'))]
+    pages = [os.path.join('content', 'pages', f) for f in sorted_list_dir(os.path.join('content', 'pages'))]
+    articles = [os.path.join('content', 'articles', f) for f in sorted_list_dir(os.path.join('content', 'articles'))]
 
     files = pages + articles
 
@@ -230,9 +241,8 @@ def generate():
 
         target = data.get('layout') + 's'
         target_dir = os.path.join('output', target)
-        if os.path.exists(target_dir):
-            shutil.rmtree(target_dir)
-        os.makedirs(target_dir)
+        if not os.path.exists(target_dir):
+            os.makedirs(target_dir)
 
         # Create file in output direction
         layout = data.get('layout')
@@ -242,7 +252,9 @@ def generate():
         data['site'] = settings
         page = template.render(data)  # Date and other things
 
-        open(os.path.join('output', target, file_no_ext + '.html'), 'w').write(page)
+        file_out = open(os.path.join('output', target, file_no_ext + '.html'), 'w')
+        file_out.write(page)
+        file_out.close()
 
     # Copy index
     print(' - Parsing index page')
@@ -275,7 +287,9 @@ def main():
         parser.add_argument('-d', '--deploy', help='Deploy to GitHub', action='store_true')
         args = parser.parse_args()
 
-        # TODO: No site detected alert
+        if not os.path.isfile('.statico'):
+            print('This is not a "statico" directory. Run "statico" to mark it as so.')
+            return
 
         if args.generate:
             print('Generating site...')
