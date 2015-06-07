@@ -109,6 +109,7 @@ def parse_index(filename, o):
     html = markdown.markdown(''.join(rest))
     data['articles'] = get_articles(o.get('articles'))
     data['content'] = html
+    data['paginate'] = True
     data['site'] = o.get('settings')
 
     template = o.get('env').get_template('default.html')
@@ -119,10 +120,15 @@ def parse_index(filename, o):
 def clear_workspace():
     if os.path.isfile('settings.json'):
         os.remove('settings.json')
+
+    if os.path.isfile('.statico'):
+        os.remove('.statico')
+
     shutil.rmtree('content', True)
     shutil.rmtree('output', True)
     shutil.rmtree('static', True)
     shutil.rmtree('templates', True)
+    shutil.rmtree('.templates', True)
 
 
 def get_articles(f_articles):
@@ -212,7 +218,6 @@ def new_article(title):
         'title: ' + title + '\n',
         'date: ' + date.today().isoformat() + '\n',
         'author: ' + settings.get('author') + '\n',
-        'summary: A beautiful page\n',
         '---\n'
     ])
     article.close()

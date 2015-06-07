@@ -20,10 +20,19 @@ a {
   	transition: color 0.3s;
 }
 
-article .content {
+.content {
 	font-family: 'Noto Serif', serif;
 	color: #222;
 	line-height: 1.6;
+}
+
+.page-content {
+    padding: 35px 0;
+}
+
+.page-content h1 {
+    font-size: 1.5em;
+    font-weight: bold;
 }
 
 .wrapper {
@@ -178,7 +187,7 @@ article .content {
     	margin-bottom: 18px;
     }
     
-    article .content {
+    .content {
     	font-size: 1.3em;
     }
 }

@@ -1,5 +1,7 @@
+{% if paginate %}
 <script>
     var numberOfItems = Number('{{ site.paginate }}');
 </script>
-<script src="static/js/paginator.js"></script>
-<script src="static/js/main.js"></script>
+<script src="/static/js/paginator.js"></script>
+<script src="/static/js/main.js"></script>
+{% endif %}
