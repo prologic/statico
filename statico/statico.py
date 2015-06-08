@@ -13,6 +13,7 @@ import http.server
 import socketserver
 import argparse as ap
 import jinja2 as jn
+from github3 import GitHub
 
 """
 statico --> creates structure directory in current directory
@@ -30,10 +31,8 @@ def normalize_title(title):
 def copy_directory(src, dest):
     try:
         shutil.copytree(src, dest)
-    # Directories are the same
     except shutil.Error as e:
         print('Directory not copied. Error: %s' % e)
-    # Any error saying that the directory doesn't exist
     except OSError as e:
         print('Directory not copied. Error: %s' % e)
 
@@ -53,10 +52,6 @@ def run_server():
 
     print("Serving at http://127.0.0.1:" + str(PORT) + ' ...')
     httpd.serve_forever()
-
-
-def deploy():
-    pass
 
 
 def validate_date(date_text):
@@ -107,10 +102,13 @@ def parse_index(filename, o):
     fp = open(filename)
     rest, data = parse_metadata(fp)
     html = markdown.markdown(''.join(rest))
-    data['articles'] = get_articles(o.get('articles'))
+    articles, recent_articles = get_articles(o.get('articles'))
+    data['articles'] = articles
     data['content'] = html
     data['paginate'] = True
+    data['gh_repos'] = o.get('repos')
     data['site'] = o.get('settings')
+    data['site']['recent_articles'] = recent_articles
 
     template = o.get('env').get_template('default.html')
     page = template.render(data)
@@ -131,17 +129,38 @@ def clear_workspace():
     shutil.rmtree('.templates', True)
 
 
-def get_articles(f_articles):
+def get_articles(f_articles, limit=5):
     articles = []
+    recent_articles = []
 
-    for f_article in f_articles:
+    for idx, f_article in enumerate(f_articles):
         fp = open(f_article)
         rest, data = parse_metadata(fp)
-        data['content'] = markdown.markdown(''.join(rest))
         data['url'] = 'articles/' + os.path.basename(os.path.normpath(f_article.split('.')[0])) + '.html'
-        articles.append(data)
+        if idx < limit:
+            recent_articles.append(data)
 
-    return articles
+        data['content'] = markdown.markdown(''.join(rest))
+        articles.append(data)
+        fp.close()
+
+    return articles, recent_articles
+
+
+def get_recent_articles(f_articles, limit=5):
+    recent_articles = []
+
+    for idx, f_article in enumerate(f_articles):
+        if idx == limit:
+            break
+
+        fp = open(f_article)
+        _, data = parse_metadata(fp)
+        data['url'] = 'articles/' + os.path.basename(os.path.normpath(f_article.split('.')[0])) + '.html'
+        recent_articles.append(data)
+        fp.close()
+
+    return recent_articles
 
 
 def create():
@@ -237,6 +256,11 @@ def generate():
     loader = jn.FileSystemLoader(os.path.join(os.getcwd(), 'templates'))
     env = jn.Environment(loader=loader)
 
+    # Add GitHub repos
+    gh = GitHub()
+    repo_limit = int(settings.get('github_repo_count'))
+    repos = list(map(lambda r: r.repository, list(gh.search_repositories('user:' + settings['github_user'], sort='updated'))[:repo_limit]))
+
     print(' - Parsing articles and pages')
     for f in files:
         fp = open(f)
@@ -255,6 +279,8 @@ def generate():
 
         data['content'] = html
         data['site'] = settings
+        data['site']['recent_articles'] = get_recent_articles(articles)
+        data['gh_repos'] = repos
         page = template.render(data)  # Date and other things
 
         file_out = open(os.path.join('output', target, file_no_ext + '.html'), 'w')
@@ -263,7 +289,12 @@ def generate():
 
     # Copy index
     print(' - Parsing index page')
-    parse_index(os.path.join('content', 'index.md'), {'env': env, 'settings': settings, 'articles': articles})
+    parse_index(os.path.join('content', 'index.md'), {
+        'env': env,
+        'settings': settings,
+        'articles': articles,
+        'repos': repos
+    })
 
     # END: Parse files
 
@@ -289,7 +320,6 @@ def main():
         parser.add_argument('-a', '--article', help='Create an article', type=str)
         parser.add_argument('-c', '--clear', help='Clear directory', action='store_true')
         parser.add_argument('-P', '--preview', help='Preview your site', action='store_true')
-        parser.add_argument('-d', '--deploy', help='Deploy to GitHub', action='store_true')
         args = parser.parse_args()
 
         if not os.path.isfile('.statico'):
@@ -300,7 +330,7 @@ def main():
             print('Generating site...')
             generate()
             print('Head to "output" to view your generated site.\n'
-                  'Type "statico --deploy" to deploy your site to GitHub, otherwise upload manually.\n'
+                  'Now you are ready to upload your site manually (next release will support GH pages deployment).\n'
                   'Type "statico --preview" to get a preview of your site.')
         elif args.page:
             new_page(args.page)
@@ -311,5 +341,3 @@ def main():
                 clear_workspace()
         elif args.preview:
             run_server()
-        elif args.deploy:
-            deploy()

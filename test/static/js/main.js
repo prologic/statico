@@ -1,11 +1,13 @@
-var main = (function (paginator, numberOfItems) {
+var main = (function (paginator, itemsPerPage) {
 
     var init = function () {
-        paginator.create('.blog-index .entry');
+        paginator.create('.blog-index .entry', {
+            'itemsPerPage': itemsPerPage
+        });
     };
 
     return { 'init': init };
 
-})(paginator, numberOfItems);
+})(paginator, itemsPerPage);
 
 window.onload = main.init;

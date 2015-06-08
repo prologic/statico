@@ -101,6 +101,28 @@ a {
     width: 100%;
 }
 
+.aside-entry {
+    margin-bottom: 22px;
+    color: #4c4c4c;
+}
+
+.aside-entry h1 {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.aside-entry ul {
+    list-style: none;
+}
+
+.aside-entry li {
+    padding: .5em 0;
+    margin: 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
 .blog-index {
     width: 100%;
 }
