@@ -258,7 +258,8 @@ def generate():
 
     # Add GitHub repos
     gh = GitHub()
-    repo_limit = int(settings.get('github_repo_count'))
+    repo_limit_maybe = settings.get('github_repo_count')
+    repo_limit = int(repo_limit_maybe) if repo_limit_maybe else 5
     repos = list(map(lambda r: r.repository, list(gh.search_repositories('user:' + settings['github_user'], sort='updated'))[:repo_limit]))
 
     print(' - Parsing articles and pages')

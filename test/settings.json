@@ -7,9 +7,9 @@
   "paginate": 3,
   "asides": ["recent_posts.html", "github.html"],
 
-  "github_user": "username",
+  "github_user": "oss6",
   "github_repo_count": 5,
   "twitter_user": "username",
   "twitter_tweet_button": true,
-  "google_analytics_tracking_id": "Your tracking ID"
+  "google_analytics_tracking_id": "UX-IDK456"
 }
