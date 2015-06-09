@@ -2,7 +2,7 @@
     <h1>Recent Posts</h1>
     <ul>
     {% for article in site.recent_articles %}
-        <li><a href="{{ article.url}}">{{ article.title }}</a></li>
+        <li><a href="/{{ article.url}}">{{ article.title }}</a></li>
     {% endfor %}
     </ul>
 </section>
