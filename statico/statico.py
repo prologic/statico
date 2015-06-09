@@ -13,7 +13,7 @@ import http.server
 import socketserver
 import argparse as ap
 import jinja2 as jn
-from github3 import GitHub
+from github3 import GitHub, GitHubError
 
 """
 statico --> creates structure directory in current directory
@@ -106,7 +106,8 @@ def parse_index(filename, o):
     data['articles'] = articles
     data['content'] = html
     data['paginate'] = True
-    data['gh_repos'] = o.get('repos')
+    if o.get('repos'):
+        data['gh_repos'] = o.get('repos')
     data['site'] = o.get('settings')
     data['site']['recent_articles'] = recent_articles
 
@@ -257,10 +258,16 @@ def generate():
     env = jn.Environment(loader=loader)
 
     # Add GitHub repos
-    gh = GitHub()
-    repo_limit_maybe = settings.get('github_repo_count')
-    repo_limit = int(repo_limit_maybe) if repo_limit_maybe else 5
-    repos = list(map(lambda r: r.repository, list(gh.search_repositories('user:' + settings['github_user'], sort='updated'))[:repo_limit]))
+    repos = None
+    if settings.get('github_user') and settings.get('github_repo_count'):
+        try:
+            gh = GitHub()
+            repo_limit_maybe = settings.get('github_repo_count')
+            repo_limit = int(repo_limit_maybe) if repo_limit_maybe else 5
+            repos = list(map(lambda r: r.repository, list(gh.search_repositories('user:' + settings['github_user'], sort='updated'))[:repo_limit]))
+        except GitHubError:
+            repos = None
+            print('GitHub search repositories error. Check "github_user" in settings.json')
 
     print(' - Parsing articles and pages')
     for f in files:
@@ -279,9 +286,11 @@ def generate():
         template = env.get_template(layout + '.html')
 
         data['content'] = html
+        data['url'] = target + '/' + file_no_ext + '.html'
         data['site'] = settings
         data['site']['recent_articles'] = get_recent_articles(articles)
-        data['gh_repos'] = repos
+        if repos:
+            data['gh_repos'] = repos
         page = template.render(data)  # Date and other things
 
         file_out = open(os.path.join('output', target, file_no_ext + '.html'), 'w')
