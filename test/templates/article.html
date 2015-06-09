@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block container %}
+    <article class="entry">
+        <p class="date">{{ date }}</p>
+        <h2>{{ title }}</h2>
+
+        <div class="content">
+        {{ content }}
+        </div>
+    </article>
+
+    {% if site.twitter_tweet_button %}
+    <br><br>
+    <a class="twitter-share-button"
+      href="https://twitter.com/intent/tweet?original_referer={{ site.url|urlencode }}/{{ url|urlencode }}&tw_p=tweetbutton&url={{ site.url|urlencode }}/{{ url|urlencode }}&text={{ title|urlencode }}"
+            target="_blank">
+        <i></i>
+        <span class="label">Tweet</span>
+    </a>
+    {% endif %}
+{% endblock %}

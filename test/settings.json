@@ -1,0 +1,15 @@
+{
+  "url": "http://localhost",
+  "author": "Change me",
+  "title": "My awesome blog",
+  "subtitle": "Powered by statico",
+  "description": "An amazing blog",
+  "remote": "https://github.com/username/username.github.io",
+  "paginate": 3,
+  "asides": ["recent_posts.html", "github.html"],
+
+  "github_user": "oss6",
+  "github_repo_count": 5,
+  "twitter_tweet_button": true,
+  "google_analytics_tracking_id": "Your tracking ID"
+}

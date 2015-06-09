@@ -340,7 +340,7 @@ def main():
             print('Generating site...')
             generate()
             print('Head to "output" to view your generated site.\n'
-                  'Now you are ready to upload your site manually (next release will support GH pages deployment).\n'
+                  'Now you are ready to upload your site (next release will support GH pages deployment).\n'
                   'Type "statico --preview" to get a preview of your site.')
         elif args.page:
             new_page(args.page)
