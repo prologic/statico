@@ -4,7 +4,6 @@
   "title": "My awesome blog",
   "subtitle": "Powered by statico",
   "description": "An amazing blog",
-  "remote": "https://github.com/username/username.github.io",
   "paginate": 3,
   "asides": ["recent_posts.html", "github.html"],
 
