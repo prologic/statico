@@ -5,6 +5,7 @@ __version__ = '0.0.1'
 
 import sys
 import os
+import re
 import markdown
 import json
 import shutil
@@ -25,7 +26,7 @@ statico -d or --deploy
 
 
 def normalize_title(title):
-    return title.lower().replace(' ', '-')
+    return re.sub(' +', ' ', title).lower().replace(' ', '-')
 
 
 def copy_directory(src, dest):
