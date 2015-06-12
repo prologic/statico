@@ -1,0 +1,1 @@
+from .statico import *

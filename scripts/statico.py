@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from statico import run
+import statico as st
 
 if __name__ == '__main__':
-    run()
+    st.run()
