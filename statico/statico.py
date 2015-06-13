@@ -25,11 +25,11 @@ statico -d or --deploy
 """
 
 
-def normalize_title(title):
+def _normalize_title(title):
     return re.sub(' +', ' ', title).lower().replace(' ', '-')
 
 
-def copy_directory(src, dest):
+def _copy_directory(src, dest):
     try:
         shutil.copytree(src, dest)
     except shutil.Error as e:
@@ -38,12 +38,12 @@ def copy_directory(src, dest):
         print('Directory not copied. Error: %s' % e)
 
 
-def sorted_list_dir(path):
+def _sorted_list_dir(path):
     mtime = lambda f: os.stat(os.path.join(path, f)).st_mtime
     return list(sorted(os.listdir(path), key=mtime))
 
 
-def run_server():
+def _run_server():
     print('cd output')
     os.chdir('output')
 
@@ -55,7 +55,7 @@ def run_server():
     httpd.serve_forever()
 
 
-def validate_date(date_text):
+def _validate_date(date_text):
     try:
         datetime.strptime(date_text, '%Y-%m-%d')
     except ValueError:
@@ -82,7 +82,7 @@ def parse_metadata(fp):
             attr = parts[0]
             value = parts[1].strip()
 
-            if validate_date(value):
+            if _validate_date(value):
                 data[attr] = datetime.strptime(value, '%Y-%m-%d').strftime('%B %d, %Y')
             else:
                 data[attr] = value
@@ -177,12 +177,12 @@ def create():
 
     # Static
     static_path = os.path.join(dir_path, 'static')
-    copy_directory(static_path, 'static')
+    _copy_directory(static_path, 'static')
     print(' - Static assets [DONE]')
 
     # Templates
     templates_path = os.path.join(dir_path, 'templates')
-    copy_directory(templates_path, 'templates')
+    _copy_directory(templates_path, 'templates')
     print(' - Templates [DONE]')
 
     # Content
@@ -226,7 +226,7 @@ def new_page(name):
 def new_article(title):
     # 2015/05/27/99-challenge/
     settings = json.load(open('settings.json'))
-    filename = os.path.join('content', 'articles', date.today().isoformat() + '-' + normalize_title(title) + '.md')
+    filename = os.path.join('content', 'articles', date.today().isoformat() + '-' + _normalize_title(title) + '.md')
 
     if os.path.isfile(filename):
         if input(title + ' already exists! Do you want to overwrite it? [y/n]') == 'n':
@@ -249,8 +249,8 @@ def generate():
     settings = json.load(open('settings.json'))
 
     # Get all filenames
-    pages = [os.path.join('content', 'pages', f) for f in sorted_list_dir(os.path.join('content', 'pages'))]
-    articles = [os.path.join('content', 'articles', f) for f in sorted_list_dir(os.path.join('content', 'articles'))]
+    pages = [os.path.join('content', 'pages', f) for f in _sorted_list_dir(os.path.join('content', 'pages'))]
+    articles = [os.path.join('content', 'articles', f) for f in _sorted_list_dir(os.path.join('content', 'articles'))]
 
     files = pages + articles
 
@@ -314,7 +314,7 @@ def generate():
     static = os.path.join('output', 'static')
     if os.path.exists(static):
         shutil.rmtree(static)
-    copy_directory('static', os.path.join('output', 'static'))
+    _copy_directory('static', os.path.join('output', 'static'))
 
 
 def run():
@@ -351,4 +351,4 @@ def run():
             if input('Are you sure you want to clear the workspace? [y/n] ') == 'y':
                 clear_workspace()
         elif args.preview:
-            run_server()
+            _run_server()
