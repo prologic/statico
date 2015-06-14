@@ -7,7 +7,7 @@ import statico.statico as st
 setup(name='statico',
       version=st.__version__,
       description='Static site generator',
-      long_description=open('README.md').read(),
+      long_description=open('README.rst').read(),
       author='Ossama Edbali',
       author_email='ossedb@gmail.com',
       url='https://github.com/oss6/statico/',
@@ -22,7 +22,7 @@ setup(name='statico',
           'Topic :: Utilities'
       ],
       packages=['statico'],
-
+      include_package_data=True,
       install_requires=[
           'Markdown==2.6.2',
           'Jinja2==2.7.3',
