@@ -4,7 +4,7 @@ A simple and extensible static site generator in Python
 
 Install
 -------
-`pip install statico`
+.. code:: pip install statico
 
 
 Commands
