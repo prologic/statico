@@ -1,11 +1,14 @@
-# statico
+statico
+=========
 A simple and extensible static site generator in Python
 
-## Install
+Install
+-------
 `pip install statico`
 
 
-## Commands
+Commands
+--------
 
 * `statico -h | statico --help` - If you're stuck this is your friend
 * `statico` - Create a new web site in the current directory.
@@ -15,7 +18,8 @@ A simple and extensible static site generator in Python
 * `statico [-P|--preview]` - Preview the web site (on 127.0.0.1:8000).
 * `statico [-c|--clear]` - Clears the workspace.
 
-## Web site structure
+Web site structure
+------------------
     content/            # The content directory (here you make your changes).
         articles/       
         index.md        # Do not change if you want the default look
@@ -39,5 +43,6 @@ A simple and extensible static site generator in Python
             navigation.html
         page.html
     
-## License
+License
+-------
 MIT © [Ossama Edbali](http://oss6.github.io)

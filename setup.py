@@ -22,16 +22,7 @@ setup(name='statico',
           'Topic :: Utilities'
       ],
       packages=['statico'],
-      package_data={'statico': [
-          'data/settings.json',
-          'data/static/css/*.css',
-          'data/static/js/*.js',
-          'data/static/images/*',
-          'data/templates/*.html',
-          'data/templates/includes/*.html',
-          'data/templates/includes/asides/*.html'
-      ]},
-      include_package_data=True,
+
       install_requires=[
           'Markdown==2.6.2',
           'Jinja2==2.7.3',
