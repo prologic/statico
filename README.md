@@ -27,10 +27,10 @@ With pip:
         css/
         images/
         js/
-    templates
-        article.html
-        base.html
-        default.html
+    templates/          # Contains the templates for the web site
+        article.html    # Article template
+        base.html       # Base template from which all templates inherit
+        default.html    # Index page default template
         includes/
             after_footer.html
             asides/
