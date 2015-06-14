@@ -4,44 +4,44 @@ A simple and extensible static site generator in Python
 
 Install
 -------
-.. code:: pip install statico
+:code:`pip install statico`
 
 
 Commands
 --------
 
-* `statico -h | statico --help` - If you're stuck this is your friend
-* `statico` - Create a new web site in the current directory.
-* `statico [-a|--article] [title]` - Create a new article.
-* `statico [-p|--page] [page_name]` - Create a new page.
-* `statico [-g|--generate]` - Generate the web site in the 'output' directory.
-* `statico [-P|--preview]` - Preview the web site (on 127.0.0.1:8000).
-* `statico [-c|--clear]` - Clears the workspace.
+* :code:`statico -h | statico --help` - If you're stuck this is your friend
+* :code:`statico` - Create a new web site in the current directory.
+* :code:`statico [-a|--article] [title]` - Create a new article.
+* :code:`statico [-p|--page] [page_name]` - Create a new page.
+* :code:`statico [-g|--generate]` - Generate the web site in the 'output' directory.
+* :code:`statico [-P|--preview]` - Preview the web site (on 127.0.0.1:8000).
+* :code:`statico [-c|--clear]` - Clears the workspace.
 
 Web site structure
 ------------------
-    content/            # The content directory (here you make your changes).
-        articles/       
-        index.md        # Do not change if you want the default look
-        pages/
-    output/             # Output directory to transfer to your web server
-    settings.json       # Look inside, self-explanatory
-    static/
-        css/
-        images/
-        js/
-    templates/          # Contains the templates for the web site
-        article.html    # Article template
-        base.html       # Base template from which all templates inherit
-        default.html    # Index page default template
-        includes/
-            after_footer.html
-            asides/
-            footer.html
-            header.html
-            head.html
-            navigation.html
-        page.html
+* content/
+    - articles/       
+    - index.md
+    - pages/
+* output/
+* settings.json
+* static/
+    - css/
+    - images/
+    - js/
+* templates/
+    - article.html
+    - base.html
+    - default.html
+    - includes/
+        - after_footer.html
+        - asides/
+        - footer.html
+        - header.html
+        - head.html
+        - navigation.html
+    - page.html
     
 License
 -------
