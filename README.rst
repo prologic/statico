@@ -45,4 +45,5 @@ Web site structure
     
 License
 -------
-MIT © [Ossama Edbali](http://oss6.github.io)
+MIT © `Ossama Edbali
+<http://oss6.github.io>`_.
