@@ -10,11 +10,12 @@ import markdown
 import json
 import shutil
 from datetime import date, datetime
-import http.server
-import socketserver
 import argparse as ap
 import jinja2 as jn
 from github3 import GitHub, GitHubError
+
+from six.moves import socketserver
+from six.moves import SimpleHTTPServer
 
 """
 statico --> creates structure directory in current directory
@@ -52,7 +53,7 @@ def _run_server():
     os.chdir('output')
 
     PORT = 8000
-    Handler = http.server.SimpleHTTPRequestHandler
+    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
     httpd = socketserver.TCPServer(("", PORT), Handler)
 
     print("Serving at http://127.0.0.1:" + str(PORT) + ' ...')
