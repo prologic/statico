@@ -260,10 +260,8 @@ def generate():
     settings = json.load(open('settings.json'))
 
     # Get all filenames
-    pages = [os.path.join('content', 'pages', f)
-             for f in _sorted_list_dir(os.path.join('content', 'pages'))]
-    articles = [os.path.join('content', 'articles', f) for f in _sorted_list_dir(
-        os.path.join('content', 'articles'))]
+    pages = [f for f in _sorted_list_dir(os.path.join('content', 'pages'))]
+    articles = [f for f in _sorted_list_dir(os.path.join('content', 'articles'))]
 
     files = pages + articles
 
