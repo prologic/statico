@@ -29,6 +29,6 @@ setup(name='statico',
           'github3.py==0.9.4'
       ],
       entry_points={
-        "console_scripts": ['statico = statico.statico:run']
+          "console_scripts": ['statico = statico.statico:run']
       },
-)
+      )
