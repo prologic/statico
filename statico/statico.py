@@ -38,9 +38,13 @@ def _copy_directory(src, dest):
         print('Directory not copied. Error: %s' % e)
 
 
+def _get_mtime(f):
+    return os.stat(f).st_mtime
+
+
 def _sorted_list_dir(path):
-    mtime = lambda f: os.stat(os.path.join(path, f)).st_mtime
-    return list(sorted(os.listdir(path), key=mtime))
+    paths = [os.path.join(path, p) for p in os.listdir(path)]
+    return sorted(paths, key=_get_mtime)
 
 
 def _run_server():
@@ -83,7 +87,8 @@ def parse_metadata(fp):
             value = parts[1].strip()
 
             if _validate_date(value):
-                data[attr] = datetime.strptime(value, '%Y-%m-%d').strftime('%B %d, %Y')
+                data[attr] = datetime.strptime(
+                    value, '%Y-%m-%d').strftime('%B %d, %Y')
             else:
                 data[attr] = value
         else:  # Found close
@@ -138,7 +143,9 @@ def get_articles(f_articles, limit=5):
     for idx, f_article in enumerate(f_articles):
         fp = open(f_article)
         rest, data = parse_metadata(fp)
-        data['url'] = 'articles/' + os.path.basename(os.path.normpath(f_article.split('.')[0])) + '.html'
+        data['url'] = 'articles/' + \
+            os.path.basename(
+                os.path.normpath(f_article.split('.')[0])) + '.html'
         if idx < limit:
             recent_articles.append(data)
 
@@ -158,7 +165,9 @@ def get_recent_articles(f_articles, limit=5):
 
         fp = open(f_article)
         _, data = parse_metadata(fp)
-        data['url'] = 'articles/' + os.path.basename(os.path.normpath(f_article.split('.')[0])) + '.html'
+        data['url'] = 'articles/' + \
+            os.path.basename(
+                os.path.normpath(f_article.split('.')[0])) + '.html'
         recent_articles.append(data)
         fp.close()
 
@@ -226,7 +235,8 @@ def new_page(name):
 def new_article(title):
     # 2015/05/27/99-challenge/
     settings = json.load(open('settings.json'))
-    filename = os.path.join('content', 'articles', date.today().isoformat() + '-' + _normalize_title(title) + '.md')
+    filename = os.path.join('content', 'articles', date.today(
+    ).isoformat() + '-' + _normalize_title(title) + '.md')
 
     if os.path.isfile(filename):
         if input(title + ' already exists! Do you want to overwrite it? [y/n]') == 'n':
@@ -249,8 +259,10 @@ def generate():
     settings = json.load(open('settings.json'))
 
     # Get all filenames
-    pages = [os.path.join('content', 'pages', f) for f in _sorted_list_dir(os.path.join('content', 'pages'))]
-    articles = [os.path.join('content', 'articles', f) for f in _sorted_list_dir(os.path.join('content', 'articles'))]
+    pages = [os.path.join('content', 'pages', f)
+             for f in _sorted_list_dir(os.path.join('content', 'pages'))]
+    articles = [os.path.join('content', 'articles', f) for f in _sorted_list_dir(
+        os.path.join('content', 'articles'))]
 
     files = pages + articles
 
@@ -265,10 +277,12 @@ def generate():
             gh = GitHub()
             repo_limit_maybe = settings.get('github_repo_count')
             repo_limit = int(repo_limit_maybe) if repo_limit_maybe else 5
-            repos = list(map(lambda r: r.repository, list(gh.search_repositories('user:' + settings['github_user'], sort='updated'))[:repo_limit]))
+            repos = list(map(lambda r: r.repository, list(gh.search_repositories(
+                'user:' + settings['github_user'], sort='updated'))[:repo_limit]))
         except GitHubError:
             repos = None
-            print('GitHub search repositories error. Check "github_user" in settings.json')
+            print(
+                'GitHub search repositories error. Check "github_user" in settings.json')
 
     print(' - Parsing articles and pages')
     for f in files:
@@ -294,7 +308,8 @@ def generate():
             data['gh_repos'] = repos
         page = template.render(data)  # Date and other things
 
-        file_out = open(os.path.join('output', target, file_no_ext + '.html'), 'w')
+        file_out = open(
+            os.path.join('output', target, file_no_ext + '.html'), 'w')
         file_out.write(page)
         file_out.close()
 
@@ -317,38 +332,47 @@ def generate():
     _copy_directory('static', os.path.join('output', 'static'))
 
 
-def run():
+def run():  # noqa
+    # XXX: Refactor this.
+    # XXX: C901: This is too complex.
 
     # Create directory structure
-    if len(sys.argv[1:]) == 0:
+    if len(sys.argv) == 1:
         print('Creating site...')
         create()
-    else:
-        parser = ap.ArgumentParser()
-        parser.add_argument('-g', '--generate', help='Generate the output directory to upload to the web server',
-                            action='store_true')
-        parser.add_argument('-p', '--page', help='Create a page', type=str)
-        parser.add_argument('-a', '--article', help='Create an article', type=str)
-        parser.add_argument('-c', '--clear', help='Clear directory', action='store_true')
-        parser.add_argument('-P', '--preview', help='Preview your site', action='store_true')
-        args = parser.parse_args()
+        return
 
-        if not os.path.isfile('.statico'):
-            print('This is not a "statico" directory. Run "statico" to mark it as so.')
-            return
+    parser = ap.ArgumentParser()
+    parser.add_argument('-g', '--generate', help='Generate the output directory to upload to the web server',
+                        action='store_true')
+    parser.add_argument('-p', '--page', help='Create a page', type=str)
+    parser.add_argument(
+        '-a', '--article', help='Create an article', type=str)
+    parser.add_argument(
+        '-c', '--clear', help='Clear directory', action='store_true')
+    parser.add_argument(
+        '-P', '--preview', help='Preview your site', action='store_true')
+    args = parser.parse_args()
 
-        if args.generate:
-            print('Generating site...')
-            generate()
-            print('Head to "output" to view your generated site.\n'
-                  'Now you are ready to upload your site (next release will support GH pages deployment).\n'
-                  'Type "statico --preview" to get a preview of your site.')
-        elif args.page:
-            new_page(args.page)
-        elif args.article:
-            new_article(args.article)
-        elif args.clear:
-            if input('Are you sure you want to clear the workspace? [y/n] ') == 'y':
-                clear_workspace()
-        elif args.preview:
-            _run_server()
+    if not os.path.isfile('.statico'):
+        print(
+            'This is not a "statico" directory. Run "statico" to mark it as so.')
+        return
+
+    if args.generate:
+        print('Generating site...')
+        generate()
+        print(
+            'Head to "output" to view your generated site.\n'
+            'Now you are ready to upload your site (next release will support GH pages deployment).\n'
+            'Type "statico --preview" to get a preview of your site.'
+        )
+    elif args.page:
+        new_page(args.page)
+    elif args.article:
+        new_article(args.article)
+    elif args.clear:
+        if input('Are you sure you want to clear the workspace? [y/n] ') == 'y':
+            clear_workspace()
+    elif args.preview:
+        _run_server()
