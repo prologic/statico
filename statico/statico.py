@@ -9,6 +9,7 @@ import re
 import markdown
 import json
 import shutil
+from pathlib import Path
 from datetime import date, datetime
 import argparse as ap
 import jinja2 as jn
@@ -40,11 +41,12 @@ def _copy_directory(src, dest):
 
 
 def _get_mtime(f):
-    return os.stat(f).st_mtime
+    return f.stat().st_mtime
 
 
 def _sorted_list_dir(path):
-    paths = [os.path.join(path, p) for p in os.listdir(path)]
+    p = Path(path)
+    paths = [x for x in p.iterdir()]
     return sorted(paths, key=_get_mtime)
 
 
@@ -142,11 +144,9 @@ def get_articles(f_articles, limit=5):
     recent_articles = []
 
     for idx, f_article in enumerate(f_articles):
-        fp = open(f_article)
+        fp = f_article.open()  # open(f_article)
         rest, data = parse_metadata(fp)
-        data['url'] = 'articles/' + \
-            os.path.basename(
-                os.path.normpath(f_article.split('.')[0])) + '.html'
+        data['url'] = 'articles/' + f_article.name.split('.')[0] + '.html'
         if idx < limit:
             recent_articles.append(data)
 
@@ -164,11 +164,9 @@ def get_recent_articles(f_articles, limit=5):
         if idx == limit:
             break
 
-        fp = open(f_article)
+        fp = f_article.open() # open(f_article)
         _, data = parse_metadata(fp)
-        data['url'] = 'articles/' + \
-            os.path.basename(
-                os.path.normpath(f_article.split('.')[0])) + '.html'
+        data['url'] = 'articles/' + f_article.name.split('.')[0] + '.html'
         recent_articles.append(data)
         fp.close()
 
@@ -260,8 +258,8 @@ def generate():
     settings = json.load(open('settings.json'))
 
     # Get all filenames
-    pages = [f for f in _sorted_list_dir(os.path.join('content', 'pages'))]
-    articles = [f for f in _sorted_list_dir(os.path.join('content', 'articles'))]
+    pages = _sorted_list_dir(os.path.join('content', 'pages'))
+    articles = _sorted_list_dir(os.path.join('content', 'articles'))
 
     files = pages + articles
 
@@ -285,8 +283,8 @@ def generate():
 
     print(' - Parsing articles and pages')
     for f in files:
-        fp = open(f)
-        file_no_ext = os.path.basename(os.path.normpath(f.split('.')[0]))
+        fp = f.open()
+        file_no_ext = f.name.split('.')[0]
         rest, data = parse_metadata(fp)
         html = markdown.markdown(''.join(rest))
 
